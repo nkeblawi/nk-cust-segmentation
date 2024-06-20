@@ -7,6 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import RobustScaler, StandardScaler
 from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
+import joblib
 
 # --------------------------------------------------------------
 # Load dataset
@@ -156,3 +157,12 @@ plt.savefig("../../reports/figures/num-customers-by-segment.png")
 # --------------------------------------------------------------
 
 df.to_pickle("../../data/processed/DDU - Segmented Kajabi Data.pkl")
+
+
+# --------------------------------------------------------------
+# Save the KMeans models
+# --------------------------------------------------------------
+
+joblib.dump(kmeans, "../../models/kmeans_clustering.pkl")
+joblib.dump(pca_2d, "../../models/pca_2d.pkl")
+joblib.dump(pca_3d, "../../models/pca_3d.pkl")
