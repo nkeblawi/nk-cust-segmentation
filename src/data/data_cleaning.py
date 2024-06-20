@@ -8,6 +8,27 @@ df_cleaned = df.copy()
 
 ###### DATA CLEANING ########
 
+# Impute missing values under 'Last Activity' and 'Last Sign In At' columns
+# using values from the Created At column
+df_cleaned["Last Activity"] = df_cleaned["Last Activity"].fillna(
+    df_cleaned["Created At"]
+)
+df_cleaned["Last Sign In At"] = df_cleaned["Last Sign In At"].fillna(
+    df_cleaned["Created At"]
+)
+df_cleaned["Sign In Count"] = df_cleaned["Sign In Count"].fillna(0)
+
+# Convert date columns from object to date formats
+df_cleaned["Created At"] = pd.to_datetime(df_cleaned["Created At"], utc=True)
+df_cleaned["Last Activity"] = pd.to_datetime(df_cleaned["Last Activity"], utc=True)
+df_cleaned["Last Sign In At"] = pd.to_datetime(df_cleaned["Last Sign In At"], utc=True)
+
+# Convert 'Sign In Count' to integer instead of floats
+df_cleaned["Sign In Count"] = df_cleaned["Sign In Count"].astype(int)
+
+# Reset the index of the dataframe
+df_cleaned = df_cleaned.reset_index(drop=True)
+
 # List any products or tags that we don't need
 products_not_needed = [
     "AppSumo Deal Information",
@@ -150,3 +171,26 @@ df_cleaned["Tags"].replace("", "No Tag", inplace=True)
 # --------------------------------------------------
 
 df_cleaned.to_pickle("../../data/interim/DDU - Cleaned Kajabi Data.pkl")
+
+
+# --------------------------------------------------
+# Export product and tag lists for use in feature engineering
+# --------------------------------------------------
+
+# Flatten the list of comma-delimited products and tags into individual items
+flattened_products = [
+    item.strip() for sublist in df_cleaned["Products"] for item in sublist.split(",")
+]
+unique_products = set(flattened_products)
+unique_products_list = list(unique_products)
+
+flattened_tags = [
+    item.strip() for sublist in df_cleaned["Tags"] for item in sublist.split(",")
+]
+unique_tags = set(flattened_tags)
+unique_tags_list = list(unique_tags)
+
+pd.DataFrame({"Products": unique_products_list}).to_csv(
+    "../../data/interim/DDU Product List.csv"
+)
+pd.DataFrame({"Tags": unique_tags_list}).to_csv("../../data/interim/DDU Tag List.csv")

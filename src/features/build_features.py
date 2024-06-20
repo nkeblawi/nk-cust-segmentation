@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+from sklearn.preprocessing import RobustScaler, StandardScaler
 
 # Import the cleaned dataset
 df = pd.read_pickle("../../data/interim/DDU - Cleaned Kajabi Data.pkl")

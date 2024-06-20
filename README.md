@@ -37,17 +37,18 @@ Project Organization
     │   │
     │   ├── data           <- Scripts to download or generate data
     │   │   └── make_dataset.py
+    │   │   └── data_cleaning.py
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
     │   │   └── build_features.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
+    │   │   ├── kmeans_clustering.py
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
+    │       └── post_model_viz.py
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
@@ -55,3 +56,22 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target='_blank' href='https://drivendata.github.io/cookiecutter-data-science/'>cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+
+--------
+
+LESSON NOTES
+
+I plot the scaled features to make sure distributions are normal, and they were not. 
+I tried StandardScaler() or RobustScaler(), but either did not sufficiently normalize
+the distrubutions, so I needed to use log transformations to handle heavily skewed 
+distrubutions cuased by many zero values.
+
+Clustering by product is more visually informative than by tags, but it is clearly 
+biased towards number of products versus how many times a customer has signed 
+(feature = "Sign In Count")
+
+The reason is that the vast majority (73.5%!) have not signed in once, so I decided 
+to drop this as a feature and instead apply PCA on the vectorized products feature.
+
+Increasing the number of clusters from 4 to 6 seemed to improve
+KMeans Silhouette score to 0.76 from 0.70.

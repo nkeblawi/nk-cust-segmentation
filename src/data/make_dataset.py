@@ -28,32 +28,13 @@ columns = [
 ]
 df_pruned = df_no_duplicates[columns]
 
-# Impute missing values under 'Last Activity' and 'Last Sign In At' columns
-# using values from the Created At column
-df_pruned["Last Activity"] = df_pruned["Last Activity"].fillna(df_pruned["Created At"])
-df_pruned["Last Sign In At"] = df_pruned["Last Sign In At"].fillna(
-    df_pruned["Created At"]
-)
-df_pruned["Sign In Count"] = df_pruned["Sign In Count"].fillna(0)
-
-# Convert date columns from object to date formats
-df_pruned["Created At"] = pd.to_datetime(df_pruned["Created At"], utc=True)
-df_pruned["Last Activity"] = pd.to_datetime(df_pruned["Last Activity"], utc=True)
-df_pruned["Last Sign In At"] = pd.to_datetime(df_pruned["Last Sign In At"], utc=True)
-
-# Convert 'Sign In Count' to integer instead of floats
-df_pruned["Sign In Count"] = df_pruned["Sign In Count"].astype(int)
-
-# Reset the index of the dataframe
-df_pruned = df_pruned.reset_index(drop=True)
-
-# Impute missing values in 'Products' and 'Tags' columns
-df_pruned["Products"] = df_pruned["Products"].fillna("No Product")
-df_pruned["Tags"] = df_pruned["Tags"].fillna("No Tag")
-
 # --------------------------------------------------
 # Tag customers who have active memberships with DDU
 # --------------------------------------------------
+
+# First, impute missing values in 'Products' and 'Tags' columns
+df_pruned["Products"] = df_pruned["Products"].fillna("No Product")
+df_pruned["Tags"] = df_pruned["Tags"].fillna("No Tag")
 
 # Label all members
 member_tags = [
@@ -85,26 +66,3 @@ df_pruned["Is_Member"] = df_pruned.apply(
 # --------------------------------------------------
 
 df_pruned.to_pickle("../../data/interim/DDU - Pruned Kajabi Data.pkl")
-
-
-# --------------------------------------------------
-# Export product and tag lists for use in feature engineering
-# --------------------------------------------------
-
-# Flatten the list of comma-delimited products and tags into individual items
-flattened_products = [
-    item.strip() for sublist in df_pruned["Products"] for item in sublist.split(",")
-]
-unique_products = set(flattened_products)
-unique_products_list = list(unique_products)
-
-flattened_tags = [
-    item.strip() for sublist in df_pruned["Tags"] for item in sublist.split(",")
-]
-unique_tags = set(flattened_tags)
-unique_tags_list = list(unique_tags)
-
-pd.DataFrame({"Products": unique_products_list}).to_csv(
-    "../../data/interim/DDU Product List.csv"
-)
-pd.DataFrame({"Tags": unique_tags_list}).to_csv("../../data/interim/DDU Tag List.csv")
