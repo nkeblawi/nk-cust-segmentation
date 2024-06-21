@@ -59,7 +59,7 @@ Project Organization
 
 --------
 
-LESSON NOTES
+PROJECT NOTES
 
 I plot the scaled features to make sure distributions are normal, and they were not. 
 I tried StandardScaler() or RobustScaler(), but either did not sufficiently normalize
@@ -67,11 +67,13 @@ the distrubutions, so I needed to use log transformations to handle heavily skew
 distrubutions cuased by many zero values.
 
 Clustering by product is more visually informative than by tags, but it is clearly 
-biased towards number of products versus how many times a customer has signed 
-(feature = "Sign In Count")
+biased towards number of products versus how many times a customer has signed in
+(feature = "Sign In Count"). 
 
 The reason is that the vast majority (73.5%!) have not signed in once, so I decided 
-to drop this as a feature and instead apply PCA on the vectorized products feature.
+to drop this as a feature and instead apply PCA on the vectorized products feature. 
+Before applying 2D and 3D PCA, I used scikit-learn's CountVectorizer() class to apply 
+both one-hot encoding and tokenization on product data in one step. 
 
-Increasing the number of clusters from 4 to 6 seemed to improve
-KMeans Silhouette score to 0.76 from 0.70.
+3D PCA seems to score slightly higher than 2D, but both score well. Increasing the 
+number of clusters from 4 to 6 improved the KMeans Silhouette score to 0.76 from 0.70.
