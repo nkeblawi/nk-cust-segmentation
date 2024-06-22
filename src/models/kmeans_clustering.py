@@ -1,13 +1,16 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import RobustScaler, StandardScaler
 from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 import joblib
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join("../visualization/")))
+import plotter
 
 # --------------------------------------------------------------
 # Load dataset
@@ -93,64 +96,44 @@ print("Silhouette Score for 3D PCA:", score_3d)
 # ------------------------------------------------------------
 
 # Plot 2D PCA
-plt.figure(figsize=(10, 8))
-ax = plt.subplot(111)
-scatter = ax.scatter(
-    X_pca_2d[:, 0],
-    X_pca_2d[:, 1],
-    c=clusters_2d,
-    cmap="viridis",
-    edgecolor="k",
-    s=50,
-    alpha=0.7,
-)
-ax.set_title("2D PCA Cluster Visualization - Segmentation by Product")
-ax.set_xlabel("Principal Component 1")
-ax.set_ylabel("Principal Component 2")
-legend = plt.legend(*scatter.legend_elements(), title="Clusters")
-ax.add_artist(legend)
-plt.savefig("../../reports/figures/kmeans-cluster-2d-pca.png")
+plotter.ClusterPlotter(
+    X_pca=X_pca_2d,
+    clusters=clusters_2d,
+    title="2D PCA Cluster Visualization - Segmentation by Product",
+    xlabel="Principal Component 1",
+    ylabel="Principal Component 2",
+    filename="../../reports/figures/kmeans-cluster-2d-pca.png",
+    plot_type="2d",
+).plot()
 
 # Plot 3D PCA
-fig = plt.figure(figsize=(10, 8))
-ax = fig.add_subplot(111, projection="3d")
-scatter = ax.scatter(
-    X_pca_3d[:, 0],
-    X_pca_3d[:, 1],
-    X_pca_3d[:, 2],
-    c=clusters_3d,
-    cmap="viridis",
-    edgecolor="k",
-    s=50,
-    alpha=0.7,
-)
-ax.set_title("3D PCA Cluster Visualization - Segmentation by Product")
-ax.set_xlabel("Principal Component 1")
-ax.set_ylabel("Principal Component 2")
-ax.set_zlabel("Principal Component 3")
-legend = plt.legend(*scatter.legend_elements(), title="Clusters")
-ax.add_artist(legend)
-plt.savefig("../../reports/figures/kmeans-cluster-3d-pca.png")
-
+plotter.ClusterPlotter(
+    X_pca=X_pca_3d,
+    clusters=clusters_3d,
+    title="3D PCA Cluster Visualization - Segmentation by Product",
+    xlabel="Principal Component 1",
+    ylabel="Principal Component 2",
+    zlabel="Principal Component 3",
+    filename="../../reports/figures/kmeans-cluster-3d-pca.png",
+    plot_type="3d",
+).plot()
 
 # --------------------------------------------------------------
 # Assign clusters to the original dataset (using Product results)
 # --------------------------------------------------------------
 
-# Count the number of customers in each cluster
+# Count the number of customers in each cluster and plot the historgram
 df["Segment"] = clusters_3d
 cluster_counts = df["Segment"].value_counts().sort_index()
 
-# Plotting using matplotlib
-plt.figure(figsize=(10, 6))
-plt.bar(cluster_counts.index, cluster_counts.values, color="skyblue", edgecolor="k")
-plt.xlabel("Cluster Number")
-plt.ylabel("Number of Customers")
-plt.title("Number of Customers in Each Cluster")
-plt.xticks(cluster_counts.index)
-plt.grid(axis="y")
-plt.savefig("../../reports/figures/num-customers-by-segment.png")
-
+plotter.BarPlotter(
+    data=cluster_counts,
+    title="Number of Customers in Each Cluster",
+    xlabel="Cluster Number",
+    ylabel="Number of Customers",
+    filename="../../reports/figures/num-customers-by-segment.png",
+    xticks=cluster_counts.index,
+).plot()
 
 # --------------------------------------------------------------
 # Save the segmented dataset
