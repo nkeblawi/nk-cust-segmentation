@@ -1,33 +1,61 @@
 import pandas as pd
 import numpy as np
 import re
+from sklearn.base import BaseEstimator, TransformerMixin
 
-# Load the pruned dataset
-df = pd.read_pickle("../../data/interim/DDU - Pruned Kajabi Data.pkl")
-df_cleaned = df.copy()
 
-###### DATA CLEANING ########
+# Custom transformer for data cleaning
+class DataCleaner(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        # Add any initialization parameters here if needed
+        pass
 
-# Impute missing values under 'Last Activity' and 'Last Sign In At' columns
-# using values from the Created At column
-df_cleaned["Last Activity"] = df_cleaned["Last Activity"].fillna(
-    df_cleaned["Created At"]
-)
-df_cleaned["Last Sign In At"] = df_cleaned["Last Sign In At"].fillna(
-    df_cleaned["Created At"]
-)
-df_cleaned["Sign In Count"] = df_cleaned["Sign In Count"].fillna(0)
+    def fit(self, X, y=None):
+        return self
 
-# Convert date columns from object to date formats
-df_cleaned["Created At"] = pd.to_datetime(df_cleaned["Created At"], utc=True)
-df_cleaned["Last Activity"] = pd.to_datetime(df_cleaned["Last Activity"], utc=True)
-df_cleaned["Last Sign In At"] = pd.to_datetime(df_cleaned["Last Sign In At"], utc=True)
+    def transform(self, df):
+        # Implement your data cleaning steps here
+        df_cleaned = df.copy()
+        df_cleaned = clean_dataset(df_cleaned)
+        return df_cleaned
 
-# Convert 'Sign In Count' to integer instead of floats
-df_cleaned["Sign In Count"] = df_cleaned["Sign In Count"].astype(int)
 
-# Reset the index of the dataframe
-df_cleaned = df_cleaned.reset_index(drop=True)
+# --------------------------------------------------
+# Clean dataset sequentially and save
+# --------------------------------------------------
+
+
+def clean_dataset(df):
+    df = impute_missing_values(df)
+    df = convert_date_columns(df)
+    df = clean_products(df)
+    df = clean_tags(df)
+    return df
+
+
+# Function that imputes missing values under 'Last Activity' and
+# 'Last Sign In At' columns using values from the Created At column
+def impute_missing_values(df):
+    df["Last Activity"] = df["Last Activity"].fillna(df["Created At"])
+    df["Last Sign In At"] = df["Last Sign In At"].fillna(df["Created At"])
+    df["Sign In Count"] = df["Sign In Count"].fillna(0)
+    return df
+
+
+# Function to convert date columns from object to date formats
+def convert_date_columns(df):
+    df["Created At"] = pd.to_datetime(df["Created At"], utc=True)
+    df["Last Activity"] = pd.to_datetime(df["Last Activity"], utc=True)
+    df["Last Sign In At"] = pd.to_datetime(df["Last Sign In At"], utc=True)
+
+    # Convert 'Sign In Count' to integer instead of floats
+    df["Sign In Count"] = df["Sign In Count"].astype(int)
+
+    # Reset the index of the dataframe
+    df = df.reset_index(drop=True)
+
+    return df
+
 
 # List any products or tags that we don't need
 products_not_needed = [
@@ -116,81 +144,62 @@ def clean_data(data):
 # Clean the 'Products' column
 # --------------------------------------------------
 
-# Explode the 'Products' column to handle each product individually
-df_exploded = df.explode("Products")
 
-# Clean each product
-df_exploded["Products"] = df_exploded["Products"].apply(
-    lambda x: [clean_data(item) for item in x.split(",")]
-)
+def clean_products(df):
 
-# Remove duplicates
-df_exploded["Products"] = df_exploded["Products"].apply(lambda x: list(set(x)))
+    # Explode the 'Products' column to handle each product individually
+    df_exploded = df.explode("Products")
 
-# Group by the original index to reassemble the lists
-df_cleaned_products = df_exploded.groupby(level=0).agg(
-    {"Products": lambda x: ", ".join(sum(x, []))}
-)
-df_cleaned_products["Products"] = df_cleaned_products["Products"].str.lstrip(", ")
+    # Clean each product
+    df_exploded["Products"] = df_exploded["Products"].apply(
+        lambda x: [clean_data(item) for item in x.split(",")]
+    )
 
-# Reassemble the cleaned products back into the DataFrame
-df_cleaned["Products"] = df_cleaned_products["Products"]
+    # Remove duplicates
+    df_exploded["Products"] = df_exploded["Products"].apply(lambda x: list(set(x)))
 
-# Replace empty strings with 'No Product'
-df_cleaned["Products"].replace("", "No Product", inplace=True)
+    # Group by the original index to reassemble the lists
+    df_cleaned_products = df_exploded.groupby(level=0).agg(
+        {"Products": lambda x: ", ".join(sum(x, []))}
+    )
+    df_cleaned_products["Products"] = df_cleaned_products["Products"].str.lstrip(", ")
+
+    # Reassemble the cleaned products back into the DataFrame
+    df["Products"] = df_cleaned_products["Products"]
+
+    # Replace empty strings with 'No Product'
+    df["Products"].replace("", "No Product", inplace=True)
+
+    return df
+
 
 # --------------------------------------------------
 # Clean the 'Tags' column
 # --------------------------------------------------
 
-# Explode the 'Products' column to handle each product individually
-df_exploded = df.explode("Tags")
 
-# Clean each product
-df_exploded["Tags"] = df_exploded["Tags"].apply(
-    lambda x: [clean_data(item) for item in x.split(",")]
-)
+def clean_tags(df):
 
-# Remove duplicates
-df_exploded["Tags"] = df_exploded["Tags"].apply(lambda x: list(set(x)))
+    # Explode the 'Products' column to handle each product individually
+    df_exploded = df.explode("Tags")
 
-# Group by the original index to reassemble the lists
-df_cleaned_tags = df_exploded.groupby(level=0).agg(
-    {"Tags": lambda x: ", ".join(sum(x, []))}
-)
+    # Clean each product
+    df_exploded["Tags"] = df_exploded["Tags"].apply(
+        lambda x: [clean_data(item) for item in x.split(",")]
+    )
 
-# Reassemble the cleaned products back into the DataFrame
-df_cleaned["Tags"] = df_cleaned_tags["Tags"]
+    # Remove duplicates
+    df_exploded["Tags"] = df_exploded["Tags"].apply(lambda x: list(set(x)))
 
-# Replace empty strings with 'No Tag'
-df_cleaned["Tags"].replace("", "No Tag", inplace=True)
+    # Group by the original index to reassemble the lists
+    df_cleaned_tags = df_exploded.groupby(level=0).agg(
+        {"Tags": lambda x: ", ".join(sum(x, []))}
+    )
 
+    # Reassemble the cleaned products back into the DataFrame
+    df["Tags"] = df_cleaned_tags["Tags"]
 
-# --------------------------------------------------
-# Save the cleaned dataset
-# --------------------------------------------------
+    # Replace empty strings with 'No Tag'
+    df["Tags"].replace("", "No Tag", inplace=True)
 
-df_cleaned.to_pickle("../../data/interim/DDU - Cleaned Kajabi Data.pkl")
-
-
-# --------------------------------------------------
-# Export product and tag lists for use in feature engineering
-# --------------------------------------------------
-
-# Flatten the list of comma-delimited products and tags into individual items
-flattened_products = [
-    item.strip() for sublist in df_cleaned["Products"] for item in sublist.split(",")
-]
-unique_products = set(flattened_products)
-unique_products_list = list(unique_products)
-
-flattened_tags = [
-    item.strip() for sublist in df_cleaned["Tags"] for item in sublist.split(",")
-]
-unique_tags = set(flattened_tags)
-unique_tags_list = list(unique_tags)
-
-pd.DataFrame({"Products": unique_products_list}).to_csv(
-    "../../data/interim/DDU Product List.csv"
-)
-pd.DataFrame({"Tags": unique_tags_list}).to_csv("../../data/interim/DDU Tag List.csv")
+    return df

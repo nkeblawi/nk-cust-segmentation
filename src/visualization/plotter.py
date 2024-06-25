@@ -3,7 +3,11 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from IPython.display import display
 
-import matplotlib.pyplot as plt
+#################################################################################
+# HistogramPlotter
+# ClusterPlotter
+# BarPlotter
+###############################################################################
 
 
 # Class for creating a Histogram plot with flexible options

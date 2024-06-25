@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+</head>
+<body>
+    <h1>Results</h1>
+    <div>
+        <h2>Silhouette Score: {{ silhouette_score }}</h2>
+    </div>
+    <div>
+        <h2>3D Scatter Plot</h2>
+        <img src="data:image/png;base64,{{ plot_url }}" alt="3D Scatter Plot">
+    </div>
+    <div>
+        <a href="/download">Download Processed CSV</a>
+    </div>
+</body>
+</html>

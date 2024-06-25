@@ -1,23 +1,48 @@
 import pandas as pd
 import numpy as np
+from sklearn.base import BaseEstimator, TransformerMixin
 
-# Load the raw dataset
-df = pd.read_csv("../../data/raw/DDU - Raw Kajabi Data.csv")
+
+# Custom transformer for data pruning
+class DataPruner(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        # Add any initialization parameters here if needed
+        pass
+
+    def fit(self, df, y=None):
+        return self
+
+    def transform(self, df):
+        # Implement your data cleaning steps here
+        df_pruned = df.copy()
+        df_pruned = prune_dataset(df_pruned)
+        return df_pruned
+
+
+# Run all the functions to create a pruned dataset
+def prune_dataset(df):
+    df = remove_duplicates(df)
+    df = select_features(df)
+    df = impute_missing_values(df)
+    df = label_members(df)
+    return df
+
 
 # --------------------------------------------------
 # Create an interim dataset through feature addition, imputation and pruning
 # --------------------------------------------------
 
-# Check for duplicates on the 'Email' column
-duplicates = df["Email"].duplicated()
-num_duplicates = duplicates.sum()
-print(f"Number of duplicate emails: {num_duplicates}")
 
-# Remove rows with duplicate emails, keeping the first occurrence
-df_no_duplicates = df.drop_duplicates(subset="Email", keep="first")
+# Check for duplicates on the 'Email' column and remove them, keeping the first occurrence
+def remove_duplicates(df):
+    duplicates = df["Email"].duplicated()
+    num_duplicates = duplicates.sum()
+    df_no_duplicates = df.drop_duplicates(subset="Email", keep="first")
+    return df_no_duplicates
+
 
 # Select the useful features without any identifying information (use ID column instead of name or email)
-columns = [
+selected_columns = [
     "ID",
     "Products",
     "Tags",
@@ -26,15 +51,24 @@ columns = [
     "Last Activity",
     "Last Sign In At",
 ]
-df_pruned = df_no_duplicates[columns]
+
+
+def select_features(df):
+    df = df[selected_columns]
+    return df
+
 
 # --------------------------------------------------
 # Tag customers who have active memberships with DDU
 # --------------------------------------------------
 
+
 # First, impute missing values in 'Products' and 'Tags' columns
-df_pruned["Products"] = df_pruned["Products"].fillna("No Product")
-df_pruned["Tags"] = df_pruned["Tags"].fillna("No Tag")
+def impute_missing_values(df):
+    df["Products"] = df["Products"].fillna("No Product")
+    df["Tags"] = df["Tags"].fillna("No Tag")
+    return df
+
 
 # Label all members
 member_tags = [
@@ -47,22 +81,16 @@ member_tags = [
 ]
 cancelled_tags = ["DDU Insiders - Cancelled"]
 
+
 # Add a new column that labels all members and subtract those that cancelled
-df_pruned["Is_Member"] = (
-    df_pruned["Tags"]
-    .apply(lambda x: any(term in x for term in member_tags))
-    .astype(int)
-)
-# using the cancelled_tags variable, turn Is_Member back to 0 for cancelled members
-df_pruned["Is_Member"] = df_pruned.apply(
-    lambda row: (
-        0 if any(cancelled_tags[0] in tag for tag in row["Tags"]) else row["Is_Member"]
-    ),
-    axis=1,
-)
-
-# --------------------------------------------------
-# Save the interim dataset - no missing values
-# --------------------------------------------------
-
-df_pruned.to_pickle("../../data/interim/DDU - Pruned Kajabi Data.pkl")
+def label_members(df):
+    df["Is_Member"] = df["Tags"].apply(lambda x: any(term in x for term in member_tags))
+    df["Is_Member"] = df.apply(
+        lambda row: (
+            0
+            if any(cancelled_tags[0] in tag for tag in row["Tags"])
+            else row["Is_Member"]
+        ),
+        axis=1,
+    )
+    return df

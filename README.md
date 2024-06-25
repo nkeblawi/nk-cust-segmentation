@@ -45,12 +45,18 @@ Project Organization
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
     │   │   ├── kmeans_clustering.py
+    │   │   ├── kmeans_clustering_test.py
+    │   │
+    │   └── templates  <- HTML files for frontend
+    │   │   └── index.html
+    │   │   └── results.html
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
+    │       └── plotter.py
     │       └── visualize.py
     │       └── post_model_viz.py
     │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+    └── app.p              <- Starts the frontend web app
 
 
 --------
