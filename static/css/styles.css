@@ -97,7 +97,7 @@ th {
 }
 
 .download-test {
-    background-color: #FF8C00; /* Orange color */
+    background-color: #FF8C00; 
     color: white;
     padding: 10px 20px;
     border: none;
@@ -106,8 +106,15 @@ th {
     font-size: 14px;
     cursor: pointer;
     margin-top: 10px;
+    text-decoration: none;
 }
 
 .download-test:hover {
-    background-color: #E67E00; /* Slightly darker orange for hover effect */
+    background-color: #E67E00;
+    text-decoration: none;
+}
+
+.download-button-wrapper {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
 }

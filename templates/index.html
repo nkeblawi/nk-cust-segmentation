@@ -46,8 +46,15 @@
             <input type="submit" value="Upload" class="submit-button">
         </form>
         <div id="alternate-block">
-            <p>If you don't use Kajabi and don't have a customer list, that's okay! You can still experiment with this app using a test dataset. Just click below to download test data and then upload it above.</p>
-            <a href="{{ url_for('download_test_csv') }}" class="download-test">Download Test Dataset</a>
+            <div>
+                <p>If you don't use Kajabi and don't have a customer list, that's okay! You can still experiment with this app using a test dataset. Just click below to download test data and then upload it above. <span>&#x1F917;</span></p>
+            </div>
+            <div class="download-button-wrapper">
+                <a href="{{ url_for('download_test_csv') }}" class="download-test">Download Test Dataset</a>
+            </div>
+            <div>
+                <p>Note that all PII (Personal Identifiable Information) has been scrubbed from this test dataset.</p>
+            </div>
         </div>
     </div>
 </body>
