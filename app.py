@@ -24,6 +24,7 @@ from sklearn.metrics import silhouette_score
 matplotlib.use("Agg")
 
 app = Flask(__name__)
+app.static_folder = "static"
 
 # Load the model
 kmeans_model = joblib.load("models/kmeans_model.pkl")
@@ -103,7 +104,7 @@ def upload_file():
 
 @app.route("/download")
 def download_file():
-    return send_file("processed_output.csv", as_attachment=True)
+    return send_file("data/processed/processed_output.csv", as_attachment=True)
 
 
 if __name__ == "__main__":

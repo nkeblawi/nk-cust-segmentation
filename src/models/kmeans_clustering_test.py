@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import RobustScaler, StandardScaler
@@ -28,7 +29,18 @@ from src.features.build_features import create_additional_features
 
 df = pd.read_csv("../../data/raw/DDU - Raw Kajabi Data.csv")
 
-df_pruned = prune_dataset(df)
+# --------------------------------------------------------------
+# Create a random train-test split
+# --------------------------------------------------------------
+
+df_train, df_test = train_test_split(df, test_size=0.2, random_state=42, shuffle=True)
+pd.DataFrame.to_csv(df_test, "../../data/raw/DDU - Raw Kajabi Data - Test.csv")
+
+# --------------------------------------------------------------
+# Process the training data
+# --------------------------------------------------------------
+
+df_pruned = prune_dataset(df_train)
 df_pruned.to_pickle("../../data/interim/DDU - Pruned Kajabi Data.pkl")
 
 df_cleaned = clean_dataset(df_pruned)

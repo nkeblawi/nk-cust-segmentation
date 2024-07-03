@@ -1,0 +1,113 @@
+/* Style the main container */
+.container {
+    max-width: 90%; /* Set the maximum width to 90% */
+    width: 100%; /* Ensure the container takes up the full width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Center everything on the page */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Verdana', sans-serif;
+    text-align: center;
+}
+
+/* Set the font styles */
+h1, h2, h3 {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+}
+
+#redline {
+    color: red;
+    font-weight: bold;
+}
+
+/* Style the table */
+table {
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 12px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center; 
+}
+th {
+    background-color: #f2f2f2;
+}
+
+/* Style the form */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    max-width: 30%;
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Style the file input */
+.file-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Verdana', sans-serif;
+}
+
+/* Style the submit button */
+.submit-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007BFF;
+    color: white;
+    font-family: 'Verdana', sans-serif;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+
+#alternate-block {
+    width: 60%;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.download-test {
+    background-color: #FF8C00; /* Orange color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Verdana', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.download-test:hover {
+    background-color: #E67E00; /* Slightly darker orange for hover effect */
+}

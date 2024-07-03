@@ -4,12 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload CSV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Upload CSV File</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".csv">
-        <input type="submit" value="Upload">
-    </form>
+    <div class="container">
+        <h1>Customer Segmentation Using a Clustering ML Algorithm</h1>
+        <div>
+            <p id="redline">*** For Kajabi users only ***</p> 
+            <p>Before using this tool, please export your customer list from Kajabi into a .csv file.</p>
+        </div>
+        <h3>CSV File Requirements</h1>
+        <div>
+            <p>Please ensure your CSV file contains the following columns before uploading it to the app:</p>
+        </div>
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Products</th>
+                        <th>Tags</th>
+                        <th>Created At</th>
+                        <th>Sign In Count</th>
+                        <th>Last Activity</th>
+                        <th>Last Sign In At</th>
+                    </tr>
+                    <tr>
+                        <td>Integer</td>
+                        <td>String</td>
+                        <td>String</td>
+                        <td>DateTime</td>
+                        <td>Integer</td>
+                        <td>DateTime</td>
+                        <td>DateTime</td>
+                </thead>
+            </table>
+        </div>
+        <h2>Upload your CSV file below</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
+            <input type="file" name="file" accept=".csv" class="file-input">
+            <input type="submit" value="Upload" class="submit-button">
+        </form>
+        <div id="alternate-block">
+            <p>If you don't use Kajabi and don't have a customer list, that's okay! You can still experiment with this app using a test dataset. Just click below to download test data and then upload it above.</p>
+            <button class="download-test">Download Test Dataset</button>
+        </div>
+    </div>
 </body>
 </html>
