@@ -70,7 +70,7 @@ def upload_file():
         df_merged = df.merge(df_pca[["ID", "Cluster"]], on="ID", how="left")
 
         # Save the processed file
-        output_file = "processed_output.csv"
+        output_file = "data/processed/processed_output.csv"
         df_merged.to_csv(output_file, index=False)
 
         # Create a 3D scatter plot

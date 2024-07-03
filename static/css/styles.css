@@ -58,8 +58,6 @@ th {
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
-    max-width: 30%;
-    width: 100%;
     box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
@@ -90,13 +88,18 @@ th {
 
 
 #alternate-block {
-    width: 60%;
-    margin-top: 20px;
+    width: 80%;
+    margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
+
+    border: 2px solid #ccc;  /* Add a 2px solid border */
+    border-radius: 10px;     /* Round the corners */
+    padding: 10px;           /* Add some inner spacing */
+    background-color: #f9f9f9; /* Light grey background */
 }
 
-.download-test {
+.download-test, .download-processed {
     background-color: #FF8C00; 
     color: white;
     padding: 10px 20px;
@@ -109,7 +112,7 @@ th {
     text-decoration: none;
 }
 
-.download-test:hover {
+.download-test:hover, .download-processed:hover {
     background-color: #E67E00;
     text-decoration: none;
 }

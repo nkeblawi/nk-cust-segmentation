@@ -11,12 +11,10 @@
         <h1>Customer Segmentation Using a Clustering ML Algorithm</h1>
         <div>
             <p id="redline">*** For Kajabi users only ***</p> 
-            <p>Before using this tool, please export your customer list from Kajabi into a .csv file.</p>
+            <p>Before using this tool, please export your customer list from <b>Kajabi</b> into a <b>.csv</b> file.</p>
         </div>
-        <h3>CSV File Requirements</h1>
-        <div>
-            <p>Please ensure your CSV file contains the following columns before uploading it to the app:</p>
-        </div>
+        <h3>CSV File Requirements</h3>
+        <p>Please ensure your CSV file contains the following columns before uploading it to the app:</p>
         <div>
             <table>
                 <thead>
@@ -45,9 +43,12 @@
             <input type="file" name="file" accept=".csv" class="file-input">
             <input type="submit" value="Upload" class="submit-button">
         </form>
+        <p>NOTE: For best results, make sure you have at least THREE Products and THREE tags in your dataset. <span>&#128578;</span></p>
+        <hr>
         <div id="alternate-block">
             <div>
-                <p>If you don't use Kajabi and don't have a customer list, that's okay! You can still experiment with this app using a test dataset. Just click below to download test data and then upload it above. <span>&#x1F917;</span></p>
+                <h3>What if I don't use Kajabi and don't have a customer list?</h3>
+                <p>That's okay! You can still experiment with this app using a test dataset. Just click below to download test data and then upload it above. <span>&#x1F917;</span></p>
             </div>
             <div class="download-button-wrapper">
                 <a href="{{ url_for('download_test_csv') }}" class="download-test">Download Test Dataset</a>

@@ -4,19 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <h1>Results</h1>
     <div>
-        <h2>Silhouette Score: {{ silhouette_score }}</h2>
+        <h2>Silhouette Score: {{ '{:.2f}'.format(silhouette_score) }}</h2>
     </div>
     <div>
-        <h2>3D Scatter Plot</h2>
+        {% if silhouette_score < 0.25 %}
+            <p>&#128533; Hmm, something may not be right with your data. Are you uploading a .csv file specifically from Kajabi?</p>
+        {% elif silhouette_score < 0.50 %}
+            <p>&#128528; Well, it looks like the model needs some work. But just to be sure, please double-check your data to make sure you have at least 300 entries to ensure statistically significant sampling.</p>
+        {% elif silhouette_score < 0.75 %}
+            <p>&#128578; Not bad! The model is starting to understand how your customers differ from each other and how to group similar ones together in clusters.</p>
+        {% elif silhouette_score < 0.90 %}
+            <p>&#129321; Nice! The model is clustering your customers into distinct segments so you can use this information to create better targeted marketing campaigns.</p>
+        {% else %}
+            <p>&#128562; Wow! This is an AMAZING score. Your customers are clearly defined into distinct groups and segments. But be sure to check your results file because with a score this high, there may be potential for "overfitting", in which case we may need to try a simpler model with a lower number of clusters.</p>
+        {% endif %}
+    </div>
+    <div>
         <img src="data:image/png;base64,{{ plot_url }}" alt="3D Scatter Plot">
     </div>
-    <div>
-        <a href="/download">Download Processed CSV</a>
+    <div class="download-button-wrapper">
+        <a href="/download" class="download-processed">Download Processed CSV</a>
     </div>
 </body>
 </html>
