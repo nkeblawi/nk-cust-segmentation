@@ -72,7 +72,7 @@ Project Organization
 I plot the scaled features to make sure distributions are normal, and they were not. 
 I tried StandardScaler() or RobustScaler(), but either did not adequately normalize
 the distrubutions, so I needed to use log transformations to handle heavily skewed 
-distrubutions cuased by many zero values.
+distrubutions caused by many zero values.
 
 Clustering by product is more visually informative than by tags, but it is clearly 
 biased towards number of products versus how many times a customer has signed in
@@ -109,7 +109,7 @@ For instance, it cannot be used to recommend products to a specific group of cus
 For that, a recommender system would be used. Being an unsupervised ML algorithm, it 
 cannot identify each cluster/segment with meaningful information. Post-model analysis is
 needed to identify and label these clusters accordingly (then potentially train/test a 
-classification model on those labels and evaluate the predications for usefulness). 
+classification model on those labels and evaluate the predictions for usefulness). 
 
 Also, KMeans requires the number of clusters to be specified prior to running the model, 
 given that n_clusters is one of the most important hyperparameters. This is limiting 
