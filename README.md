@@ -107,7 +107,8 @@ scenarios, such as segmentation on various datasets other than Kajabi or Convert
 For instance, it cannot be used to recommend products to a specific group of customers. 
 For that, a recommender system would be used. Being an unsupervised ML algorithm, it 
 cannot identify each cluster/segment with meaningful information. Post-model analysis is
-needed to identify and label these clusters accordingly. 
+needed to identify and label these clusters accordingly (then potentially train/test a 
+classification model on those labels and evaluate the predications for usefulness). 
 
 Also, KMeans requires the number of clusters to be specified prior to running the model, 
 given that n_clusters is one of the most important hyperparameters. This is limiting 
@@ -132,3 +133,13 @@ number of clusters in advance. Use this if the number of segments is not known i
 3) Gaussian Mixture Models (GMM), which provides soft clustering where each customer can 
 belong to multiple segments with different probabilities (very likely when multiple products
 or multiple account tiers are offered by a business).
+
+# Summary
+KMeans with PCA did a decent job of grouping a specific customer list for a specific situation
+within tight time constraints, and has helped boost sales and membership signups in a marketing
+campaign. However, given the limitations, post-model analysis was necessary to label each 
+segment, and further improvements to clustering results can be obtained by testing other models
+such as HDBSCAN, graph clustering, and GMMs. Once all clusters/segments have been labeled for
+a subset of data, a classification model can be used to predict segmentation for all remaining
+data within the same context of the original use case. This may provide an additional boost to
+subsequent marketing campaigns.
