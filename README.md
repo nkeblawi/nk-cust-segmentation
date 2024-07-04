@@ -18,6 +18,10 @@ Project Organization
     ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
     │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
+        ├── kmeans_model.pkl
+        ├── pca_2d.pkl
+        ├── pca_3d.pkl
+        └── pca_pipeline.pkl
     │
     ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
     │                         the creator's initials, and a short `-` delimited description, e.g.
@@ -45,29 +49,26 @@ Project Organization
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
     │   │   ├── kmeans_clustering.py
-    │   │   ├── kmeans_clustering_test.py
+    │   │   ├── kmeans_clustering_test.py   <- For testing, could be converted into a notebook
     │   │
-    │   └── templates  <- HTML files for frontend
-    │   │   └── index.html
-    │   │   └── results.html
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── plotter.py
-    │       └── visualize.py
-    │       └── post_model_viz.py
-    │
+    │       └── plotter.py          <- Custom plotter classes for use across the project
+    │       └── visualize.py        <- Custom plotter functions that use the plotter classes
+    │       └── post_model_viz.py   <- For testing, could be used within a notebook
+    |
+    ├── templates  <- HTML files for frontend
+    │   │   └── index.html
+    │   │   └── results.html
+    |
     └── app.p              <- Starts the frontend web app
 
 
 --------
 
-<p><small>Project based on the <a target='_blank' href='https://drivendata.github.io/cookiecutter-data-science/'>cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+# PROJECT NOTES
 
---------
-
-### PROJECT NOTES
-
-# Feature engineering
+## Feature engineering
 I plot the scaled features to make sure distributions are normal, and they were not. 
 I tried StandardScaler() or RobustScaler(), but either did not adequately normalize
 the distrubutions, so I needed to use log transformations to handle heavily skewed 
@@ -82,7 +83,7 @@ to drop this as a feature and instead apply PCA on the vectorized products featu
 Before applying 2D and 3D PCA, I used scikit-learn's CountVectorizer() class to apply 
 both one-hot encoding and tokenization on product data in one step. 
 
-# Dimensionality reduction
+## Dimensionality reduction
 3D PCA seems to score slightly higher than 2D, but both score well. Increasing the 
 number of clusters from 4 to 6 improved the KMeans Silhouette score to 0.76 from 0.70.
 
@@ -91,7 +92,7 @@ not score as well as PCA has. For this reason, PCA has been selected as the prim
 dimensionality reduction technique for KMeans (and any new clustering model I test 
 going forward).
 
-# Model discussion and limitations
+## Model discussion and limitations
 KMeans was used with 2D and 3D PCA-processed data to understand how the customer list
 is clustered or grouped, and whether useful information can be gleaned from the results.
 
@@ -119,7 +120,7 @@ Other limitations of KMeans include:
 - sensitive to outliers that affect the centroid positions, leading to bias
 - lacks flexibility with hyperparameters (users shouldn't have to set n_clusters themselves)
 
-# Next steps
+## Next steps
 Based on the above limitations of KMeans clustering (which did a good job with exploratory
 analysis and a "first draft" of a clustering algorithm that got the job done in a pinch), 
 the next steps include testing other clustering models such as:
@@ -134,7 +135,7 @@ number of clusters in advance. Use this if the number of segments is not known i
 belong to multiple segments with different probabilities (very likely when multiple products
 or multiple account tiers are offered by a business).
 
-# Summary
+## Summary
 KMeans with PCA did a decent job of grouping a specific customer list for a specific situation
 within tight time constraints, and has helped boost sales and membership signups in a marketing
 campaign. However, given the limitations, post-model analysis was necessary to label each 
