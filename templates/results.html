@@ -12,12 +12,14 @@
         <h2>Silhouette Score: {{ '{:.2f}'.format(silhouette_score) }}</h2>
     </div>
     <div>
+        {% if silhouette_score < 0 %}
+            <p>&#128561; Oops, it looks like the clustering is really poor. Check your data preprocessing and clustering parameters, as the model might be misclassifying many data points.</p>
         {% if silhouette_score < 0.25 %}
-            <p>&#128533; Hmm, something may not be right with your data. Are you uploading a .csv file specifically from Kajabi?</p>
+            <p>&#128533; Hmm, something may not be right with your data. Are you uploading a .csv file specifically from Kajabi? If so, we need to double-check the data preprocessing steps.</p>
         {% elif silhouette_score < 0.50 %}
-            <p>&#128528; Well, it looks like the model needs some work. But just to be sure, please double-check your data to make sure you have at least 300 entries to ensure statistically significant sampling.</p>
+            <p>&#128528; Well, it looks like the model needs some work. But just to be sure, please double-check your data to make sure you have at least 300 entries to ensure statistically significant sampling. We also may need to try different clustering parameters.</p>
         {% elif silhouette_score < 0.75 %}
-            <p>&#128578; Not bad! The model is starting to understand how your customers differ from each other and how to group similar ones together in clusters.</p>
+            <p>&#128578; Not bad! The model is starting to understand how your customers differ from each other and how to group similar ones together in clusters. Fine-tuning the model may improve results.</p>
         {% elif silhouette_score < 0.90 %}
             <p>&#129321; Nice! The model is clustering your customers into distinct segments so you can use this information to create better targeted marketing campaigns.</p>
         {% else %}
