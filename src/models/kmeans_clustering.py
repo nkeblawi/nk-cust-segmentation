@@ -12,6 +12,7 @@ import joblib
 import os
 import sys
 
+sys.path.append(os.path.abspath(os.path.join("../")))
 sys.path.append(os.path.abspath(os.path.join("../../")))
 from src.data.make_dataset import DataPruner
 from src.data.data_cleaning import DataCleaner
