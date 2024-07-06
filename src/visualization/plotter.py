@@ -75,7 +75,7 @@ class ClusterPlotter:
         title,
         xlabel,
         ylabel,
-        filename,
+        filename=None,
         plot_type="2d",
         zlabel=None,
         figsize=(10, 8),
@@ -123,7 +123,8 @@ class ClusterPlotter:
         ax.set_ylabel(self.ylabel)
         legend = plt.legend(*scatter.legend_elements(), title="Clusters")
         ax.add_artist(legend)
-        plt.savefig(self.filename)
+        if self.filename is not None:
+            plt.savefig(self.filename)
         plt.show()
         plt.close()
 
@@ -146,7 +147,8 @@ class ClusterPlotter:
         ax.set_zlabel(self.zlabel)
         legend = plt.legend(*scatter.legend_elements(), title="Clusters")
         ax.add_artist(legend)
-        plt.savefig(self.filename)
+        if self.filename is not None:
+            plt.savefig(self.filename)
         plt.show()
         plt.close()
 
@@ -159,7 +161,7 @@ class BarPlotter:
         title,
         xlabel,
         ylabel,
-        filename,
+        filename=None,
         xticks=None,
         color="skyblue",
         edgecolor="k",
@@ -189,6 +191,7 @@ class BarPlotter:
         if self.xticks is not None:
             plt.xticks(self.xticks)
         plt.grid(axis="y")
-        plt.savefig(self.filename)
+        if self.filename is not None:
+            plt.savefig(self.filename)
         plt.show()
         plt.close()
