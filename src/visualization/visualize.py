@@ -23,9 +23,10 @@ df = pd.read_pickle("../../data/interim/DDU - Filtered Kajabi Data.pkl")
 # --------------------------------------------------------------
 
 # Plot a historgram of product_counts with matplotlib. The product index should be the x-axis and the count should be the y-axis
-num_products = df["Product_Count"].value_counts()
+num_products = df["Product_Count"]
 HistogramPlotter(
     data=num_products,
+    bins=range(1, num_products.max() + 2),
     title="Product Count Histogram",
     xlabel="Number of Products",
     ylabel="Number of Customers With X Number of Products",
@@ -33,14 +34,15 @@ HistogramPlotter(
 ).plot()
 
 # Plot a historgram of tag_counts with matplotlib. The tag index should be the x-axis and the count should be the y-axis
-num_tags = df["Tags_Count"].value_counts()
+num_tags = df["Tags_Count"]
 HistogramPlotter(
     data=num_tags,
+    bins=range(1, num_tags.max() + 2),
     title="Tag Count Histogram",
     xlabel="Number of Tags",
     ylabel="Number of Customers With X Number of Tags",
     filename="../../reports/figures/num_tags.png",
-    xticks=range(num_tags.index.min(), num_tags.index.max() + 1, 2),
+    xticks=range(1, num_tags.max() + 2),
 ).plot()
 
 
