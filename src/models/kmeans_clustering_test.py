@@ -19,15 +19,16 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join("../..")))
 import src.visualization.plotter as plotter
-from src.data.make_dataset import prune_dataset
-from src.data.data_cleaning import clean_dataset
-from src.features.build_features import create_additional_features
+from src.data.make_dataset import DataPruner
+from src.data.data_cleaning import DataCleaner
+from src.features.build_features import FeatureBuilder
 
 # --------------------------------------------------------------
 # Load the raw dataset
 # --------------------------------------------------------------
 
 df = pd.read_csv("../../data/raw/DDU - Raw Kajabi Data.csv")
+
 
 # --------------------------------------------------------------
 # Create a random train-test split
@@ -36,17 +37,21 @@ df = pd.read_csv("../../data/raw/DDU - Raw Kajabi Data.csv")
 df_train, df_test = train_test_split(df, test_size=0.2, random_state=42, shuffle=True)
 pd.DataFrame.to_csv(df_test, "../../data/raw/DDU - Raw Kajabi Data - Test.csv")
 
+
 # --------------------------------------------------------------
 # Process the training data
 # --------------------------------------------------------------
 
-df_pruned = prune_dataset(df_train)
+pruner = DataPruner()
+df_pruned = pruner.fit_transform(df_train)
 df_pruned.to_pickle("../../data/interim/DDU - Pruned Kajabi Data.pkl")
 
-df_cleaned = clean_dataset(df_pruned)
+cleaner = DataCleaner()
+df_cleaned = cleaner.fit_transform(df_pruned)
 df_cleaned.to_pickle("../../data/interim/DDU - Cleaned Kajabi Data.pkl")
 
-df_filtered = create_additional_features(df_cleaned)
+fbuilder = FeatureBuilder()
+df_filtered = fbuilder.fit_transform(df_cleaned)
 df_filtered.to_pickle("../../data/interim/DDU - Filtered Kajabi Data.pkl")
 
 

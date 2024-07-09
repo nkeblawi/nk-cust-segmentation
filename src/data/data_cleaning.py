@@ -41,6 +41,7 @@ def impute_missing_values(df):
     df["Last Activity"] = df["Last Activity"].fillna(df["Created At"])
     df["Last Sign In At"] = df["Last Sign In At"].fillna(df["Created At"])
     df["Sign In Count"] = df["Sign In Count"].fillna(0)
+
     return df
 
 

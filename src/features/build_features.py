@@ -14,8 +14,10 @@ class FeatureBuilder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, df):
+
         # Implement your feature engineering steps here
         df_filtered = create_additional_features(df)
+        df_filtered["Sign In Count"] = df_filtered["Sign In Count"] + 1
         return df_filtered
 
 
