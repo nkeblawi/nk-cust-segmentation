@@ -1,15 +1,12 @@
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import RobustScaler, StandardScaler
+from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 from kmeans_clustering import (
     create_pipeline,
     save_pipeline,
-    load_pipeline,
     BinaryMatrixTransformer,
     LogTransformer,
 )
@@ -88,7 +85,7 @@ X = df_filtered.iloc[:, 7:]
 df_filtered["KMeans_Cluster"] = kmeans.fit_predict(X)
 
 score = silhouette_score(X_combined_prod, df_filtered["KMeans_Cluster"])
-print("Silhouette Score for Product Clustering:", score)
+print("Silhouette Score for KMeans Clustering:", score)
 
 # Be sure to drop the 'Product_Count' and 'Tags_Count' columns so they don't bias the model
 X.drop(columns=["Product_Count", "Tags_Count"], inplace=True)
@@ -107,41 +104,64 @@ X_pca_3d = pca_3d.fit_transform(X)
 print("Explained variance ratio (2D):", pca_2d.explained_variance_ratio_.sum())
 print("Explained variance ratio (3D):", pca_3d.explained_variance_ratio_.sum())
 
-# Clustering on 2D PCA results
+# KMeans Clustering on 2D PCA results
 clusters_2d = kmeans.fit_predict(X_pca_2d)
 score_2d = silhouette_score(X_pca_2d, clusters_2d)
-print("Silhouette Score for 2D PCA:", score_2d)
+print("Silhouette Score for KMeans 2D PCA:", score_2d)
 
-# Clustering on 3D PCA results
+# KMeans Clustering on 3D PCA results
 clusters_3d = kmeans.fit_predict(X_pca_3d)
 score_3d = silhouette_score(X_pca_3d, clusters_3d)
-print("Silhouette Score for 3D PCA:", score_3d)
+print("Silhouette Score for KMeans 3D PCA:", score_3d)
+
+
+# --------------------------------------------------------------
+# Repeat using the Gaussian Mixture Model (3D PCA only)
+# ------------------------------------------------------------
+
+gmm_3d = GaussianMixture(n_components=6, random_state=42)
+gmm_labels_3d = gmm_3d.fit_predict(X_pca_3d)
+
+gmm_silhouette_3d = silhouette_score(X_pca_3d, gmm_labels_3d)
+print("Silhouette Score for GMM Clustering with 3D PCA:", gmm_silhouette_3d)
 
 
 # --------------------------------------------------------------
 # Visualize PCA results
 # ------------------------------------------------------------
 
-# Plot 2D PCA
+# Plot 2D PCA for KMeans
 plotter.ClusterPlotter(
     X_pca=X_pca_2d,
     clusters=clusters_2d,
-    title="2D PCA Cluster Visualization - Segmentation by Product",
+    title="KMeans 2D PCA Cluster Visualization - Segmentation by Product",
     xlabel="Principal Component 1",
     ylabel="Principal Component 2",
     filename="../../reports/figures/kmeans-cluster-2d-pca.png",
     plot_type="2d",
 ).plot()
 
-# Plot 3D PCA
+# Plot 3D PCA for KMeans
 plotter.ClusterPlotter(
     X_pca=X_pca_3d,
     clusters=clusters_3d,
-    title="3D PCA Cluster Visualization - Segmentation by Product",
+    title="KMeans 3D PCA Cluster Visualization - Segmentation by Product",
     xlabel="Principal Component 1",
     ylabel="Principal Component 2",
     zlabel="Principal Component 3",
     filename="../../reports/figures/kmeans-cluster-3d-pca.png",
+    plot_type="3d",
+).plot()
+
+# Plot 3D PCA for GMM
+plotter.ClusterPlotter(
+    X_pca=X_pca_3d,
+    clusters=gmm_labels_3d,
+    title="GMM 3D PCA Cluster Visualization - Segmentation by Product",
+    xlabel="Principal Component 1",
+    ylabel="Principal Component 2",
+    zlabel="Principal Component 3",
+    filename="../../reports/figures/gmm-cluster-3d-pca.png",
     plot_type="3d",
 ).plot()
 
@@ -153,13 +173,25 @@ plotter.ClusterPlotter(
 df_filtered["KMeans_3D_PCA_Cluster"] = clusters_3d
 cluster_counts = df_filtered["KMeans_3D_PCA_Cluster"].value_counts().sort_index()
 
+df_filtered["GMM_3D_PCA_Cluster"] = gmm_labels_3d
+gmm_cluster_counts = df_filtered["GMM_3D_PCA_Cluster"].value_counts().sort_index()
+
 plotter.BarPlotter(
     data=cluster_counts,
-    title="Number of Customers in Each Cluster",
+    title="Number of Customers in Each KMeans Cluster",
     xlabel="Cluster Number",
     ylabel="Number of Customers",
-    filename="../../reports/figures/num-customers-by-segment.png",
+    filename="../../reports/figures/kmeans-num-customers-by-segment.png",
     xticks=cluster_counts.index,
+).plot()
+
+plotter.BarPlotter(
+    data=gmm_cluster_counts,
+    title="Number of Customers in Each GMM Cluster",
+    xlabel="Cluster Number",
+    ylabel="Number of Customers",
+    filename="../../reports/figures/gmm-num-customers-by-segment.png",
+    xticks=gmm_cluster_counts.index,
 ).plot()
 
 # --------------------------------------------------------------
@@ -167,10 +199,15 @@ plotter.BarPlotter(
 # --------------------------------------------------------------
 
 new_df = df.merge(
-    df_filtered[["ID", "KMeans_Cluster", "KMeans_3D_PCA_Cluster"]], on="ID", how="left"
+    df_filtered[
+        ["ID", "KMeans_Cluster", "KMeans_3D_PCA_Cluster", "GMM_3D_PCA_Cluster"]
+    ],
+    on="ID",
+    how="left",
 )
 new_df.to_csv("../../data/processed/DDU - Segmented Kajabi Data.csv")
 
+new_df.describe()
 
 # --------------------------------------------------------------
 # Save the KMeans models
@@ -179,6 +216,7 @@ new_df.to_csv("../../data/processed/DDU - Segmented Kajabi Data.csv")
 joblib.dump(kmeans, "../../models/kmeans_model.pkl")
 joblib.dump(pca_2d, "../../models/pca_2d.pkl")
 joblib.dump(pca_3d, "../../models/pca_3d.pkl")
+joblib.dump(gmm_3d, "../../models/gmm_3d.pkl")
 
 
 # --------------------------------------------------------------

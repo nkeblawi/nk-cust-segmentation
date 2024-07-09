@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import RobustScaler, StandardScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline

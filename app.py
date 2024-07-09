@@ -7,7 +7,7 @@ src_dir = os.path.join(project_root, "src")
 sys.path.insert(0, project_root)
 sys.path.insert(0, src_dir)
 
-from src.models.kmeans_clustering import create_pipeline, save_pipeline, load_pipeline
+from src.models.kmeans_clustering import load_pipeline
 from flask import Flask, render_template, request, redirect, send_file
 import joblib
 import pandas as pd
@@ -26,8 +26,9 @@ matplotlib.use("Agg")
 app = Flask(__name__)
 app.static_folder = "static"
 
-# Load the model
+# Load the models
 kmeans_model = joblib.load("models/kmeans_model.pkl")
+gmm_model = joblib.load("models/gmm_3d.pkl")
 
 # Load the pipeline
 pipeline = load_pipeline("models/pca_pipeline.pkl")
@@ -62,7 +63,7 @@ def upload_file():
         score_3d = silhouette_score(X_pca_3d, clusters_3d)
 
         # Add the cluster labels to the dataframe
-        df_pca = pd.DataFrame(X_pca_3d, columns=["PC1", "PC2", "PC3"])
+        df_pca = pd.DataFrame(X_pca_3d, columns=["PCA_1", "PCA_2", "PCA_3"])
         df_pca["Cluster"] = clusters_3d
 
         # Perform the left join
