@@ -36,6 +36,8 @@ def clean_dataset(df):
 # Function that imputes missing values under 'Last Activity' and
 # 'Last Sign In At' columns using values from the Created At column
 def impute_missing_values(df):
+    df["Products"] = df["Products"].fillna("No Product")
+    df["Tags"] = df["Tags"].fillna("No Tag")
     df["Last Activity"] = df["Last Activity"].fillna(df["Created At"])
     df["Last Sign In At"] = df["Last Sign In At"].fillna(df["Created At"])
     df["Sign In Count"] = df["Sign In Count"].fillna(0)

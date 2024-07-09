@@ -23,7 +23,6 @@ class DataPruner(BaseEstimator, TransformerMixin):
 def prune_dataset(df):
     df = remove_duplicates(df)
     df = select_features(df)
-    df = impute_missing_values(df)
     df = label_members(df)
     return df
 
@@ -61,14 +60,6 @@ def select_features(df):
 # --------------------------------------------------
 # Tag customers who have active memberships with DDU
 # --------------------------------------------------
-
-
-# First, impute missing values in 'Products' and 'Tags' columns
-def impute_missing_values(df):
-    df["Products"] = df["Products"].fillna("No Product")
-    df["Tags"] = df["Tags"].fillna("No Tag")
-    return df
-
 
 # Label all members
 member_tags = [
