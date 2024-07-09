@@ -69,9 +69,28 @@ Project Organization
 
 KMeans with PCA did a decent job of grouping a specific customer list for a specific situation
 within tight time constraints, and has helped boost sales and membership signups in a marketing
-campaign. However, given the limitations, post-model analysis was necessary to label each 
+campaign. 
+
+However, given the limitations, post-model analysis was necessary to label each 
 segment, and further improvements to clustering results can be obtained by testing other models
-such as HDBSCAN, graph clustering, and GMMs. Once all clusters/segments have been labeled for
-a subset of data, a classification model can be used to predict segmentation for all remaining
-data within the same context of the original use case. This may provide an additional boost to
-subsequent marketing campaigns.
+such as HDBSCAN, graph clustering, and GMMs. 
+
+The Gaussian Mixture Model performed slightly better than KMeans using Principal Component 
+Analysis with 3 components and 6 clusters. Exploratory analysis was done in this notebook:
+
+/notebooks/nk-cust-segmentation-report.ipynb
+
+The model and pipeline files were exported to the /models/ folder. 
+
+Once all clusters/segments have been labeled for a subset of data, a classification model can be 
+used to predict segmentation for all remaining data within the same context of the original use 
+case. This may provide an additional boost to subsequent marketing campaigns.
+
+To start the project, follow these instructions:
+
+- python3 -m venv venv
+- source venv/bin/activate
+- pip install -r requirements.txt
+- Open another terminal and run the following command:
+- python app.py
+- Open http://127.0.0.1:5000/ on localhost
