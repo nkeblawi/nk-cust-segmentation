@@ -59,33 +59,49 @@ df_filtered.to_pickle("../../data/interim/DDU - Filtered Kajabi Data.pkl")
 # Run scaling function and apply Count Vectorization to products
 # --------------------------------------------------------------
 
+# Log Transform the 'Product_Count' and 'Tags_Count' columns
 lf = LogTransformer()
 lf.fit(df_filtered)
 df_logtransformed = lf.transform(df_filtered)
 
+# Add log-transformed features to the original dataframe
+new_features = df_logtransformed[["Log_Product_Count", "Log_Tags_Count"]]
+df_filtered = pd.concat([df_filtered, new_features], axis=1)
+
+# Apply Count Vectorization to products
 bmf = BinaryMatrixTransformer()
 bmf.fit(df_logtransformed)
 X_combined_prod = bmf.transform(df_logtransformed)
+
+# Add binary product columns to the original dataframe
+selected_columns = X_combined_prod.iloc[:, 2:-3]
+df_filtered = pd.concat([df_filtered, selected_columns], axis=1)
 
 
 # --------------------------------------------------------------
 # Apply KMeans clustering
 # --------------------------------------------------------------
+
 kmeans = KMeans(n_clusters=6, random_state=42)
-df_filtered["Product_Cluster"] = kmeans.fit_predict(X_combined_prod)
-score = silhouette_score(X_combined_prod, df_filtered["Product_Cluster"])
+
+X = df_filtered.iloc[:, 7:]
+df_filtered["KMeans_Cluster"] = kmeans.fit_predict(X)
+
+score = silhouette_score(X_combined_prod, df_filtered["KMeans_Cluster"])
 print("Silhouette Score for Product Clustering:", score)
 
+# Be sure to drop the 'Product_Count' and 'Tags_Count' columns so they don't bias the model
+X.drop(columns=["Product_Count", "Tags_Count"], inplace=True)
 
 # --------------------------------------------------------------
 # Use PCA to plot visualization
 # --------------------------------------------------------------
-# Use PCA to plot visualization
+
 pca_2d = PCA(n_components=2)
-X_pca_2d = pca_2d.fit_transform(X_combined_prod)
+X_pca_2d = pca_2d.fit_transform(X)
 
 pca_3d = PCA(n_components=3)
-X_pca_3d = pca_3d.fit_transform(X_combined_prod)
+X_pca_3d = pca_3d.fit_transform(X)
 
 # Explained variance can help understand the amount of information retained
 print("Explained variance ratio (2D):", pca_2d.explained_variance_ratio_.sum())
@@ -134,8 +150,8 @@ plotter.ClusterPlotter(
 # --------------------------------------------------------------
 
 # Count the number of customers in each cluster and plot the historgram
-df_filtered["Segment"] = clusters_3d
-cluster_counts = df_filtered["Segment"].value_counts().sort_index()
+df_filtered["KMeans_3D_PCA_Cluster"] = clusters_3d
+cluster_counts = df_filtered["KMeans_3D_PCA_Cluster"].value_counts().sort_index()
 
 plotter.BarPlotter(
     data=cluster_counts,
@@ -151,7 +167,7 @@ plotter.BarPlotter(
 # --------------------------------------------------------------
 
 new_df = df.merge(
-    df_filtered[["ID", "Product_Cluster", "Segment"]], on="ID", how="left"
+    df_filtered[["ID", "KMeans_Cluster", "KMeans_3D_PCA_Cluster"]], on="ID", how="left"
 )
 new_df.to_csv("../../data/processed/DDU - Segmented Kajabi Data.csv")
 
