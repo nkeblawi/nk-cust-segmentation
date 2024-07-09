@@ -75,11 +75,14 @@ def upload_file():
 
         # Add the cluster labels to the dataframe
         df_pca = pd.DataFrame(X_pca_3d, columns=["PCA_1", "PCA_2", "PCA_3"])
-        df_pca["Cluster"] = clusters_3d
+        df_pca["Segment"] = clusters_3d
 
         # Perform the left join
         df_pca["ID"] = df["ID"].reset_index(drop=True)
-        df_merged = df.merge(df_pca[["ID", "Cluster"]], on="ID", how="left")
+        df_merged = df.merge(df_pca[["ID", "Segment"]], on="ID", how="left")
+
+        # Offset the cluster labels by 1 so they start from 1
+        df_merged["Segment"] = df_merged["Segment"] + 1
 
         # Save the processed file
         output_file = "data/processed/processed_output.csv"

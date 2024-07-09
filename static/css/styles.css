@@ -1,6 +1,6 @@
 /* Style the main container */
 .container {
-    max-width: 90%; /* Set the maximum width to 90% */
+    max-width: 80%; /* Set the maximum width to 90% */
     width: 100%; /* Ensure the container takes up the full width */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
     display: flex;
