@@ -27,6 +27,7 @@ class DataCleaner(BaseEstimator, TransformerMixin):
 
 def clean_dataset(df):
     df = impute_missing_values(df)
+    df = label_members(df)
     df = convert_date_columns(df)
     df = clean_products(df)
     df = clean_tags(df)
@@ -205,4 +206,34 @@ def clean_tags(df):
     # Replace empty strings with 'No Tag'
     df["Tags"].replace("", "No Tag", inplace=True)
 
+    return df
+
+
+# --------------------------------------------------
+# Tag customers who have active memberships with DDU
+# --------------------------------------------------
+
+# Label all members
+member_tags = [
+    "DDU Expert+ - Purchased",
+    "DDU Skills+ - Purchased",
+    "DDU Scale+ - Purchased",
+    "DDU Insiders - Purchased Monthly",
+    "DDU Insiders - Purchased Annual",
+    "Measurement Marketing Academy - Purchased",
+]
+cancelled_tags = ["DDU Insiders - Cancelled"]
+
+
+# Add a new column that labels all members and subtract those that cancelled
+def label_members(df):
+    df["Is_Member"] = df["Tags"].apply(lambda x: any(term in x for term in member_tags))
+    df["Is_Member"] = df.apply(
+        lambda row: (
+            0
+            if any(cancelled_tags[0] in tag for tag in row["Tags"])
+            else row["Is_Member"]
+        ),
+        axis=1,
+    )
     return df
