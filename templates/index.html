@@ -38,6 +38,11 @@
                 </thead>
             </table>
         </div>
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
+            <h3>Choose a model from the options below:</h3>
+            <label><input type="radio" name="model" value="kmeans" checked> KMeans Clustering</label>
+            <label><input type="radio" name="model" value="gmm"> Gaussian Mixture Model</label>
+        </div>
         <h2>Upload your CSV file below</h1>
         <form action="/upload" method="post" enctype="multipart/form-data" class="upload-form">
             <input type="file" name="file" accept=".csv" class="file-input">

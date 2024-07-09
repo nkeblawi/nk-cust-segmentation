@@ -47,6 +47,10 @@ def upload_file():
     if file.filename == "":
         return "No selected file"
     if file:
+
+        # Get the selected model
+        model_choice = request.form.get("model", "kmeans")
+
         # Read the CSV file
         df = pd.read_csv(file)
 
@@ -59,7 +63,14 @@ def upload_file():
             return f"Error processing file: {str(e)}"
 
         # Run the model on the transformed data
-        clusters_3d = kmeans_model.predict(X_pca_3d)
+        if model_choice == "kmeans":
+            clusters_3d = kmeans_model.predict(X_pca_3d)
+        elif model_choice == "gmm":
+            clusters_3d = gmm_model.predict(X_pca_3d)
+        else:
+            return "Invalid model choice"
+
+        # Score the model output
         score_3d = silhouette_score(X_pca_3d, clusters_3d)
 
         # Add the cluster labels to the dataframe
@@ -75,7 +86,7 @@ def upload_file():
         df_merged.to_csv(output_file, index=False)
 
         # Create a 3D scatter plot
-        fig = plt.figure()
+        fig = plt.figure(figsize=(12, 8))
         ax = fig.add_subplot(111, projection="3d")
         scatter = ax.scatter(
             X_pca_3d[:, 0],
