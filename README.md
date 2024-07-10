@@ -88,9 +88,8 @@ case. This may provide an additional boost to subsequent marketing campaigns.
 
 To start the project, follow these instructions:
 
-- python3 -m venv venv
-- source venv/bin/activate
-- pip install -r requirements.txt
-- Open another terminal and run the following command:
-- python app.py
-- Open http://127.0.0.1:5000/ on localhost
+- Pull latest image from Docker:
+`docker pull nkeblawi/nk-cust-segmentation:amd64`
+
+- Run the container from image:
+`docker run -dp 127.0.0.1:5000:5000 nkeblawi/nk-cust-segmentation:amd64`
