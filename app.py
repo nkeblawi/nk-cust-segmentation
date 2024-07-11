@@ -124,7 +124,7 @@ def download_file():
 
 @app.route("/download_test_csv")
 def download_test_csv():
-    return send_file("data/raw/DDU - Raw Kajabi Data - Test.csv", as_attachment=True)
+    return send_file("data/external/sample_data.csv", as_attachment=True)
 
 
 if __name__ == "__main__":

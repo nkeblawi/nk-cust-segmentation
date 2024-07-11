@@ -88,8 +88,8 @@ case. This may provide an additional boost to subsequent marketing campaigns.
 
 To start the project, follow these instructions:
 
-- Pull latest image from Docker:
-`docker pull nkeblawi/nk-cust-segmentation:amd64`
+- Pull latest Docker image from my Azure Image Registry:
+`docker pull nkcustseg.azurecr.io/nk-cust-segmentation:latest`
 
 - Run the container from image:
-`docker run -dp 127.0.0.1:5000:5000 nkeblawi/nk-cust-segmentation:amd64`
+`docker run -dp 127.0.0.1:5000:5000 nkeblawi/nk-cust-segmentation:latest`
