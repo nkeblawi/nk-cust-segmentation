@@ -86,7 +86,7 @@ Once all clusters/segments have been labeled for a subset of data, a classificat
 used to predict segmentation for all remaining data within the same context of the original use 
 case. This may provide an additional boost to subsequent marketing campaigns.
 
-To start the project, follow these instructions:
+To start the project, follow these instructions (assuming you have Docker Desktop installed):
 
 - Pull latest Docker image from my repository:
 
@@ -95,6 +95,10 @@ To start the project, follow these instructions:
 - Run the container from image:
 
 `docker run -dp 127.0.0.1:5000:5000 nkeblawi/nk-cust-segmentation:latest`
+
+- Open the app on localhost:
+
+`http://127.0.0.1:5000`
 
 # Future Improvements
 
