@@ -62,6 +62,9 @@ def upload_file():
             print(f"Error transforming the data: {e}")
             return f"Error processing file: {str(e)}"
 
+        # Load the binary dataframe from temporary file
+        df_binary_full = pd.read_pickle("data/interim/binary_df_full.pkl")
+
         # Run the model on the transformed data
         if model_choice == "kmeans":
             clusters_3d = kmeans_model.predict(X_pca_3d)
@@ -74,12 +77,14 @@ def upload_file():
         score_3d = silhouette_score(X_pca_3d, clusters_3d)
 
         # Add the cluster labels to the dataframe
-        df_pca = pd.DataFrame(X_pca_3d, columns=["PCA_1", "PCA_2", "PCA_3"])
-        df_pca["Segment"] = clusters_3d
+        df_binary_full["Segment"] = clusters_3d
 
-        # Perform the left join
-        df_pca["ID"] = df["ID"].reset_index(drop=True)
-        df_merged = df.merge(df_pca[["ID", "Segment"]], on="ID", how="left")
+        # Perform the left join and remove unnecessary columns
+        new_columns = pd.concat(
+            [df_binary_full["ID"], df_binary_full.iloc[:, 7:]], axis=1
+        )
+        df_merged = df.merge(new_columns, on="ID", how="left")
+        df_merged.drop(columns=["Log_Product_Count", "Log_Tags_Count"], inplace=True)
 
         # Offset the cluster labels by 1 so they start from 1
         df_merged["Segment"] = df_merged["Segment"] + 1
@@ -128,4 +133,4 @@ def download_test_csv():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

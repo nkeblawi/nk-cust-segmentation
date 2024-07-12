@@ -103,16 +103,12 @@ class LogTransformer(BaseEstimator, TransformerMixin):
             index=df_transformed.index,
         )
 
-        # Add other columns that should be passed through
-        for col in df.columns:
-            if col not in df_scaled.columns and col not in [
-                "Product_Count",
-                "Tags_Count",
-            ]:
-                df_scaled[col] = df[col]
+        # Add log-transformed features to the original dataframe
+        new_features = df_scaled[["Log_Product_Count", "Log_Tags_Count"]]
+        df = pd.concat([df, new_features], axis=1)
 
         # Convert the scaled features back to a DataFrame
-        return df_scaled
+        return df
 
 
 # Instead of using lambda function, we can use tokenizer_func to pickle the pipeline
@@ -162,4 +158,23 @@ class BinaryMatrixTransformer(BaseEstimator, TransformerMixin):
             axis=1,
         )
 
-        return df_binary
+        # Add binary product columns to the original dataframe
+        selected_columns = df_binary.iloc[:, 2:-3]
+        df = pd.concat([df, selected_columns], axis=1)
+
+        # -----------------------------
+        # EXPORT FULL BINARY SET TO TEMP DATAFRAME
+        # -----------------------------
+
+        # Use root path for production enviroment:
+        df.to_pickle("data/interim/binary_df_full.pkl")
+
+        # Use "../../data" path for testing
+        # df.to_pickle("../../data/interim/binary_df_full.pkl")
+
+        # Be sure to drop the 'Product_Count' and 'Tags_Count' columns so they don't bias the model
+        X = df.iloc[:, 7:]
+        X.drop(columns=["Product_Count", "Tags_Count"], inplace=True)
+
+        # Return the transformed dataframe
+        return X

@@ -61,19 +61,10 @@ lf = LogTransformer()
 lf.fit(df_filtered)
 df_logtransformed = lf.transform(df_filtered)
 
-# Add log-transformed features to the original dataframe
-new_features = df_logtransformed[["Log_Product_Count", "Log_Tags_Count"]]
-df_filtered = pd.concat([df_filtered, new_features], axis=1)
-
 # Apply Count Vectorization to products
 bmf = BinaryMatrixTransformer()
 bmf.fit(df_logtransformed)
-X_combined_prod = bmf.transform(df_logtransformed)
-
-# Add binary product columns to the original dataframe
-selected_columns = X_combined_prod.iloc[:, 2:-3]
-df_filtered = pd.concat([df_filtered, selected_columns], axis=1)
-
+X = bmf.transform(df_logtransformed)
 
 # --------------------------------------------------------------
 # Apply KMeans clustering
@@ -81,14 +72,13 @@ df_filtered = pd.concat([df_filtered, selected_columns], axis=1)
 
 kmeans = KMeans(n_clusters=6, random_state=42)
 
-X = df_filtered.iloc[:, 7:]
+# Run the KMeans model
+df_filtered = pd.read_pickle("../../data/interim/binary_df_full.pkl")
 df_filtered["KMeans_Cluster"] = kmeans.fit_predict(X)
 
-score = silhouette_score(X_combined_prod, df_filtered["KMeans_Cluster"])
+score = silhouette_score(X, df_filtered["KMeans_Cluster"])
 print("Silhouette Score for KMeans Clustering:", score)
 
-# Be sure to drop the 'Product_Count' and 'Tags_Count' columns so they don't bias the model
-X.drop(columns=["Product_Count", "Tags_Count"], inplace=True)
 
 # --------------------------------------------------------------
 # Use PCA to plot visualization
@@ -198,16 +188,10 @@ plotter.BarPlotter(
 # Save the segmented dataset
 # --------------------------------------------------------------
 
-new_df = df.merge(
-    df_filtered[
-        ["ID", "KMeans_Cluster", "KMeans_3D_PCA_Cluster", "GMM_3D_PCA_Cluster"]
-    ],
-    on="ID",
-    how="left",
-)
+new_columns = pd.concat([df_filtered["ID"], df_filtered.iloc[:, 7:]], axis=1)
+new_df = df_train.merge(new_columns, on="ID", how="left")
+new_df.drop(columns=["Log_Product_Count", "Log_Tags_Count"], inplace=True)
 new_df.to_csv("../../data/processed/DDU - Segmented Kajabi Data.csv")
-
-new_df.describe()
 
 # --------------------------------------------------------------
 # Save the KMeans models
@@ -220,9 +204,9 @@ joblib.dump(gmm_3d, "../../models/gmm_3d.pkl")
 
 
 # --------------------------------------------------------------
-# Fit the pipeline on trained data and then save it
+# Fit the pipeline on the data and then save it
 # --------------------------------------------------------------
-trained_data = pd.read_csv("../../data/raw/DDU - Raw Kajabi Data.csv")
+data = pd.read_csv("../../data/raw/DDU - Raw Kajabi Data.csv")
 pipeline = create_pipeline()
-pipeline.fit(trained_data)
+pipeline.fit(data)
 save_pipeline(pipeline, "../../models/pca_pipeline.pkl")
