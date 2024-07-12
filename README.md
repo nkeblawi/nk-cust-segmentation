@@ -65,7 +65,7 @@ Project Organization
 
 --------
 
-# PROJECT SUMMARY
+# Project Summary
 
 KMeans with PCA did a decent job of grouping a specific customer list for a specific situation
 within tight time constraints, and has helped boost sales and membership signups in a marketing
@@ -95,3 +95,11 @@ To start the project, follow these instructions:
 - Run the container from image:
 
 `docker run -dp 127.0.0.1:5000:5000 nkeblawi/nk-cust-segmentation:latest`
+
+# Future Improvements
+
+Based on post-model exploration and feedback, I've listed future action items below for future product improvements:
+
+- Add post-model analysis and visualizations to the results.html page so that quick/actionable insights are available right after the results are computed.
+- Additional feature engineering to group similar individual products into product groups, so that the model better understands how to segment the list.
+- Create new pipeline to process data from other platforms such as ConvertKit. Test using notebook first and refactor code into a new pipeline creation script. Provide option on front-end for user to select type of data file.
