@@ -9,6 +9,7 @@ Project Organization
     ├── LICENSE
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
     ├── README.md          <- The top-level README for developers using this project.
+    ├── Dockerfile         <- Build Docker image using this Dockerfile.
     ├── data
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
@@ -22,6 +23,7 @@ Project Organization
         ├── pca_2d.pkl
         ├── pca_3d.pkl
         └── pca_pipeline.pkl
+        └── gmm_3d.pkl
     │
     ├── notebooks          <- Jupyter notebooks for exploratory analysis and reporting.
     │   └── nk-cust-segmentation-report.ipynb
