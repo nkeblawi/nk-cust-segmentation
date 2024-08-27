@@ -23,9 +23,9 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
-LICENSE
-README.md
-references/
-docs/
-notebooks/
-reports/
+**/LICENSE
+**/README.md
+**/references/
+**/docs/
+**/notebooks/
+**/reports/
