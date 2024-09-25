@@ -48,7 +48,7 @@ def upload_file():
         return "No selected file"
     if file:
 
-        # Get the selected model
+        # Get the selected model (KMeans is the default)
         model_choice = request.form.get("model", "kmeans")
 
         # Read the CSV file
